@@ -1,0 +1,108 @@
+#!/usr/bin/env bash
+#
+# Update Homebrew formulas to latest upstream version.
+#
+# 1. Fetches latest tag from source repo
+# 2. Updates version.rb
+# 3. Updates sha256 checksums in all formulas
+#
+# Usage: update-formula-sha256
+
+set -euo pipefail
+
+SOURCE_REPO="kube-kaptain/kaptain-user-scripts"
+CHANGED=0
+
+# Fetch latest tag from source repo
+echo "Fetching latest tag from ${SOURCE_REPO}..."
+LATEST_TAG=$(curl -sfL "https://api.github.com/repos/${SOURCE_REPO}/tags" | \
+  grep '"name"' | head -1 | sed -E 's/.*"name": *"([^"]+)".*/\1/')
+
+if [[ -z "${LATEST_TAG}" ]]; then
+  echo "ERROR: Could not fetch latest tag from ${SOURCE_REPO}" >&2
+  exit 1
+fi
+echo "Latest tag: ${LATEST_TAG}"
+
+# Read current version
+CURRENT_VERSION=$(grep -E 'KAPTAIN_VERSION *=' version.rb | sed -E 's/.*"([^"]+)".*/\1/')
+echo "Current version: ${CURRENT_VERSION}"
+
+# Update version.rb if needed
+if [[ "${CURRENT_VERSION}" != "${LATEST_TAG}" ]]; then
+  echo "Updating version.rb to ${LATEST_TAG}..."
+  sed -i.bak "s/KAPTAIN_VERSION = \"${CURRENT_VERSION}\"/KAPTAIN_VERSION = \"${LATEST_TAG}\"/" version.rb
+  rm -f version.rb.bak
+  CHANGED=1
+else
+  echo "Version already up to date"
+fi
+echo
+
+# Update each formula's sha256
+update_formula() {
+  local formula="$1"
+  local name
+  name=$(basename "${formula}" .rb)
+
+  echo "Processing: ${name}"
+
+  # Extract URL template
+  local url_template
+  url_template=$(grep -E '^[[:space:]]*url[[:space:]]+"' "${formula}" | sed -E 's/.*url +"([^"]+)".*/\1/')
+
+  if [[ -z "${url_template}" ]]; then
+    echo "  Skipping: no URL (meta package)"
+    return 0
+  fi
+
+  # Replace #{version} with actual version
+  local url
+  url=$(echo "${url_template}" | sed "s/#{version}/${LATEST_TAG}/g")
+  echo "  URL: ${url}"
+
+  # Extract current sha256
+  local current_sha256
+  current_sha256=$(grep -E '^[[:space:]]*sha256[[:space:]]+"' "${formula}" | sed -E 's/.*sha256 +"([^"]+)".*/\1/')
+  echo "  Current sha256: ${current_sha256}"
+
+  # Download and compute sha256
+  local tmpfile computed_sha256
+  tmpfile=$(mktemp)
+  if ! curl -sfL "${url}" -o "${tmpfile}"; then
+    echo "  ERROR: Failed to download ${url}" >&2
+    rm -f "${tmpfile}"
+    return 1
+  fi
+  computed_sha256=$(shasum -a 256 "${tmpfile}" | cut -d' ' -f1)
+  rm -f "${tmpfile}"
+  echo "  Computed sha256: ${computed_sha256}"
+
+  # Update if different
+  if [[ "${current_sha256}" == "${computed_sha256}" ]]; then
+    echo "  OK: sha256 unchanged"
+  else
+    sed -i.bak "s/sha256 \"${current_sha256}\"/sha256 \"${computed_sha256}\"/" "${formula}"
+    rm -f "${formula}.bak"
+    echo "  Updated: sha256"
+    CHANGED=1
+  fi
+}
+
+for formula in Formula/*.rb; do
+  if [[ ! -f "${formula}" ]]; then
+    echo "ERROR: Formula not found: ${formula}" >&2
+    exit 1
+  fi
+  if ! update_formula "${formula}"; then
+    exit 1
+  fi
+  echo
+done
+
+if [[ "${CHANGED}" -eq 1 ]]; then
+  echo "Done. Changes made."
+  exit 1
+else
+  echo "Done. No changes."
+fi
