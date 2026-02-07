@@ -9,7 +9,8 @@ class KaptainCli < Formula
   license "MIT"
 
   def install
-    bin.install Dir["scripts/*"]
+    bin.install "kaptain"
+    bin.install "kaptain-help"
   end
 
   test do

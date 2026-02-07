@@ -12,7 +12,7 @@ class KaptainEncryption < Formula
   depends_on "openssl"
 
   def install
-    bin.install Dir["scripts/*"]
+    bin.install Dir["kaptain-*"]
   end
 
   test do
