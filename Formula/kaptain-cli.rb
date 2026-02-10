@@ -10,6 +10,7 @@ class KaptainCli < Formula
 
   def install
     bin.install "kaptain"
+    bin.install "kaptain-list"
     bin.install "kaptain-help"
     bin.install "kaptain-clean"
   end
