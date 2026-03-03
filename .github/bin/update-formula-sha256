@@ -47,46 +47,56 @@ update_formula() {
 
   echo "Processing: ${name}"
 
-  # Extract URL template
-  local url_template
-  url_template=$(grep -E '^[[:space:]]*url[[:space:]]+"' "${formula}" | sed -E 's/.*url +"([^"]+)".*/\1/')
+  # Extract all URL templates and sha256 values (formula may have resource blocks)
+  local url_templates=()
+  local current_sha256s=()
+  while IFS= read -r line; do
+    url_templates+=("$(echo "${line}" | sed -E 's/.*url +"([^"]+)".*/\1/')")
+  done < <(grep -E '^[[:space:]]*url[[:space:]]+"' "${formula}")
 
-  if [[ -z "${url_template}" ]]; then
+  while IFS= read -r line; do
+    current_sha256s+=("$(echo "${line}" | sed -E 's/.*sha256 +"([^"]+)".*/\1/')")
+  done < <(grep -E '^[[:space:]]*sha256[[:space:]]+"' "${formula}")
+
+  if [[ ${#url_templates[@]} -eq 0 ]]; then
     echo "  Skipping: no URL (meta package)"
     return 0
   fi
 
-  # Replace #{version} with actual version
-  local url
-  url=$(echo "${url_template}" | sed "s/#{version}/${LATEST_TAG}/g")
-  echo "  URL: ${url}"
+  # Process each URL/sha256 pair
+  local i
+  for ((i = 0; i < ${#url_templates[@]}; i++)); do
+    local url_template="${url_templates[$i]}"
+    local current_sha256="${current_sha256s[$i]}"
 
-  # Extract current sha256
-  local current_sha256
-  current_sha256=$(grep -E '^[[:space:]]*sha256[[:space:]]+"' "${formula}" | sed -E 's/.*sha256 +"([^"]+)".*/\1/')
-  echo "  Current sha256: ${current_sha256}"
+    # Replace #{version} and #{KAPTAIN_VERSION} with actual version
+    local url
+    url=$(echo "${url_template}" | sed -e "s/#{version}/${LATEST_TAG}/g" -e "s/#{KAPTAIN_VERSION}/${LATEST_TAG}/g")
+    echo "  URL: ${url}"
+    echo "  Current sha256: ${current_sha256}"
 
-  # Download and compute sha256
-  local tmpfile computed_sha256
-  tmpfile=$(mktemp)
-  if ! curl -sfL "${url}" -o "${tmpfile}"; then
-    echo "  ERROR: Failed to download ${url}" >&2
+    # Download and compute sha256
+    local tmpfile computed_sha256
+    tmpfile=$(mktemp)
+    if ! curl -sfL "${url}" -o "${tmpfile}"; then
+      echo "  ERROR: Failed to download ${url}" >&2
+      rm -f "${tmpfile}"
+      return 1
+    fi
+    computed_sha256=$(shasum -a 256 "${tmpfile}" | cut -d' ' -f1)
     rm -f "${tmpfile}"
-    return 1
-  fi
-  computed_sha256=$(shasum -a 256 "${tmpfile}" | cut -d' ' -f1)
-  rm -f "${tmpfile}"
-  echo "  Computed sha256: ${computed_sha256}"
+    echo "  Computed sha256: ${computed_sha256}"
 
-  # Update if different
-  if [[ "${current_sha256}" == "${computed_sha256}" ]]; then
-    echo "  OK: sha256 unchanged"
-  else
-    sed -i.bak "s/sha256 \"${current_sha256}\"/sha256 \"${computed_sha256}\"/" "${formula}"
-    rm -f "${formula}.bak"
-    echo "  Updated: sha256"
-    CHANGED=1
-  fi
+    # Update if different
+    if [[ "${current_sha256}" == "${computed_sha256}" ]]; then
+      echo "  OK: sha256 unchanged"
+    else
+      sed -i.bak "s/sha256 \"${current_sha256}\"/sha256 \"${computed_sha256}\"/" "${formula}"
+      rm -f "${formula}.bak"
+      echo "  Updated: sha256"
+      CHANGED=1
+    fi
+  done
 }
 
 for formula in Formula/*.rb; do
