@@ -18,6 +18,7 @@ brew install kaptain
 | `kaptain`              | Meta package - installs all kaptain-* brew packages   |
 | `kaptain-cli`          | Kaptain CLI, ie kaptain and kaptain-help only         |
 | `kaptain-encryption`   | Secret management scripts (encrypt/decrypt)           |
+| `kaptain-util`         | Utility scripts (list-secrets, list-config, clean)    |
 | `kaptain-user-scripts` | Same result as kaptain, but in one monolithic package |
 
 
@@ -27,6 +28,7 @@ brew install kaptain
 brew tap kube-kaptain/kaptain     # Setup common no matter which packages needed
 brew install kaptain-cli          # For only the kaptain cli script itself, and help
 brew install kaptain-encryption   # For only the secret management encrypt/decrypt scripts
+brew install kaptain-util         # For only the utility scripts (list, clean)
 brew install kaptain-user-scripts # For everything in kaptain in one monolithic package
 ```
 
