@@ -8,9 +8,10 @@ on:
 
 jobs:
   build:
-    uses: kube-kaptain/buildon-github-actions/.github/workflows/basic-quality-and-versioning.yaml@1.0.60
+    uses: kube-kaptain/buildon-github-actions/.github/workflows/basic-quality-and-versioning.yaml@1.0.81
     permissions:
       contents: write
+      packages: write
       checks: write
     with:
       qc-block-slash-containing-branches: true
