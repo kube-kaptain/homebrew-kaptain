@@ -8,19 +8,8 @@ on:
 
 jobs:
   build:
-    uses: kube-kaptain/buildon-github-actions/.github/workflows/basic-quality-and-versioning.yaml@1.0.91
+    uses: kube-kaptain/buildon-github-actions/.github/workflows/basic-quality-and-versioning.yaml@1.1.31
     permissions:
       contents: write
       packages: write
       checks: write
-    with:
-      qc-block-slash-containing-branches: true
-      qc-block-conventional-commits: true
-      tag-version-calculation-strategy: file-pattern-match
-      tag-version-pattern-type: custom
-      tag-version-source-sub-path: .
-      tag-version-source-file-name: version.rb
-      tag-version-source-custom-pattern: '^KAPTAIN_VERSION = "([0-9]+\.[0-9]+\.[0-9]+)"$'
-      tag-version-prefix-parts: 3
-      tag-version-max-parts: 4
-      hook-pre-tagging-tests-script-sub-path: bin/update-formula-sha256
