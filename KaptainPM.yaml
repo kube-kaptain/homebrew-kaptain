@@ -1,0 +1,22 @@
+apiVersion: kaptain.org/1.18
+kind: basic-quality-and-versioning
+metadata:
+  description: "Homebrew tap for Kaptain tools"
+
+spec:
+  layers:
+    - layer-github-flow-strict:[1.3,2.0)
+  main:
+    hooks:
+      preTaggingTests: .github/bin/update-formula-sha256
+  global:
+    release:
+      versioning:
+        strategy: file-pattern-match
+        patternType: custom
+        source:
+          subPath: .
+          fileName: version.rb
+          pattern: '^KAPTAIN_VERSION = "([0-9]+\.[0-9]+\.[0-9]+)"$'
+          prefixParts: '3'
+        maxParts: '4'
