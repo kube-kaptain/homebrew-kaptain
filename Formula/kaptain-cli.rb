@@ -18,6 +18,7 @@ class KaptainCli < Formula
     bin.install "kaptain-list"
     bin.install "kaptain-help"
     bin.install "kaptain-clean"
+    bin.install "kaptain-setup"
 
     resource("completion").stage do
       bash_completion.install "kaptain-completion-#{version}.bash" => "kaptain"
