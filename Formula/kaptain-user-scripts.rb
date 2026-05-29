@@ -5,7 +5,7 @@ class KaptainUserScripts < Formula
   homepage "https://github.com/kube-kaptain/kaptain-user-scripts"
   version KAPTAIN_VERSION
   url "https://github.com/kube-kaptain/kaptain-user-scripts/releases/download/#{version}/kaptain-user-scripts-#{version}.zip"
-  sha256 "11a9d49cd44719d160e825f5a6844f66734125b0d8a8d7f0a2540cc5339cac12"
+  sha256 "ef2858917a032b62e7c03694e8c16ffda32c2ca5e0aef77201c8489c9226ea03"
   license "MIT"
 
   depends_on "age"
