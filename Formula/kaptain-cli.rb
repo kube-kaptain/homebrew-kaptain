@@ -5,17 +5,17 @@ class KaptainCli < Formula
   homepage "https://github.com/kube-kaptain/kaptain-user-scripts"
   version KAPTAIN_VERSION
   url "https://github.com/kube-kaptain/kaptain-user-scripts/releases/download/#{version}/kaptain-user-scripts-cli-#{version}.zip"
-  sha256 "274e418659f7becb7149ef5ec9962da8efe0f54fb6f8172c23ce421113d9806c"
+  sha256 "ae63b71c94dc6fb4a1a371b75f57e7a76c522563a5178849fb288b52e1990172"
   license "MIT"
 
   resource "completion-bash" do
     url "https://github.com/kube-kaptain/kaptain-user-scripts/releases/download/#{KAPTAIN_VERSION}/kaptain-completion-#{KAPTAIN_VERSION}.bash"
-    sha256 "6db437157c870b7578a40cf64e98e697a76fd5815885caa52dc1c17d3a7ef9af"
+    sha256 "442b17614f039a6c2e82ed6f03604a09d796a3c7d2041697da744faa7f2047ff"
   end
 
   resource "completion-zsh" do
     url "https://github.com/kube-kaptain/kaptain-user-scripts/releases/download/#{KAPTAIN_VERSION}/kaptain-completion-#{KAPTAIN_VERSION}.zsh"
-    sha256 "1010d8a6692cec37f54dbcda3d9345ac1d735882a7404a7177f767c09b55c8d2"
+    sha256 "f78f13ae29d6ef097914df4c2add958086589238301f47dd78a8974ac67d4725"
   end
 
   def install
