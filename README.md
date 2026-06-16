@@ -7,8 +7,12 @@ Homebrew tap for Kaptain CLI and user scripts.
 
 ```bash
 brew tap kube-kaptain/kaptain
+brew trust kube-kaptain/kaptain
 brew install kaptain
 ```
+
+Recent Homebrew versions require `brew trust` for third-party taps before installs
+will proceed without prompting.
 
 
 ## Packages
@@ -26,6 +30,7 @@ brew install kaptain
 
 ```bash
 brew tap kube-kaptain/kaptain     # Setup common no matter which packages needed
+brew trust kube-kaptain/kaptain   # Trust the tap (required by recent Homebrew)
 brew install kaptain-cli          # For only the kaptain cli script itself, and help
 brew install kaptain-encryption   # For only the secret management encrypt/decrypt scripts
 brew install kaptain-util         # For only the utility scripts (list, clean)
