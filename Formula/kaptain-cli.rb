@@ -5,7 +5,7 @@ class KaptainCli < Formula
   homepage "https://github.com/kube-kaptain/kaptain-user-scripts"
   version KAPTAIN_VERSION
   url "https://github.com/kube-kaptain/kaptain-user-scripts/releases/download/#{version}/kaptain-user-scripts-cli-#{version}.zip"
-  sha256 "1f927a502236a0a25f104c1eb6e42fbc938446bad62e333a9d55044e36a0fbe0"
+  sha256 "60e2d69f15939f72cf934a474fc12904b2d6c95cdc5408da83cf768e5f59012f"
   license "MIT"
 
   resource "completion-bash" do
