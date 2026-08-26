@@ -5,7 +5,7 @@ class KaptainUserScripts < Formula
   homepage "https://github.com/kube-kaptain/kaptain-user-scripts"
   version KAPTAIN_VERSION
   url "https://github.com/kube-kaptain/kaptain-user-scripts/releases/download/#{version}/kaptain-user-scripts-#{version}.zip"
-  sha256 "dd1934ea04d4d169429f0bd798bdf6f774aa9e8cd86cadfa99e22fc8c77220d1"
+  sha256 "0f974b8c77b43a91d3ac3f685f02cc1b7dce4c2437b639202687f7251d80a2fc"
   license "MIT"
 
   depends_on "age"
@@ -13,12 +13,12 @@ class KaptainUserScripts < Formula
 
   resource "completion-bash" do
     url "https://github.com/kube-kaptain/kaptain-user-scripts/releases/download/#{KAPTAIN_VERSION}/kaptain-completion-#{KAPTAIN_VERSION}.bash"
-    sha256 "c65b5f2cd7c967b8ec3a01f357a763c3e2c0a431d540fd16b6acd301c83cc041"
+    sha256 "8f2ce0c3bc5fcaec9f0c3e9a0774e2ab4c5ec7eb4430abe15c0ee509ce287208"
   end
 
   resource "completion-zsh" do
     url "https://github.com/kube-kaptain/kaptain-user-scripts/releases/download/#{KAPTAIN_VERSION}/kaptain-completion-#{KAPTAIN_VERSION}.zsh"
-    sha256 "6bea8094369a760bb1af37446cd40073cda789a0564012b9b66d805678723989"
+    sha256 "e9db55b8bfe6d47bb06a2ff937feabc2d11c1ad3345465cce26eeea1d3aba121"
   end
 
   def install
